@@ -6,7 +6,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Scanner;
-
+/*
+ * 
+ * 
+ * 
+ * 
+ * PLEASE NOTE THAT NOT ALL WORDS WORK AS DICTONARY IS A DERP
+ * 
+ * 
+ * 
+ * 
+ */
 public class WordUnscrambler{
 	File desktop = new File( System.getProperty("user.home") + "/Desktop/Words");
 	public HashSet<String> wordBank = new HashSet<String>();
@@ -31,23 +41,34 @@ public class WordUnscrambler{
 
 
 	public void seakScrambles(StringBuilder word){
+		HashMap<String, Integer> tempStorage = new HashMap<String, Integer>();
 		scrambledWords.clear();
 		likeWords.clear();
-
-
+		String[] temp = word.toString().split("");
+		int repeat = 1;
+		for(String t : temp){
+			if(!tempStorage.containsKey(t)){
+				tempStorage.put(t, repeat);
+			}else
+				tempStorage.put(t, tempStorage.get(t)+1);
+		}
+		double divi = 1;
+		for(int d : tempStorage.values()){
+			divi*=factorial(d);
+		}
 		for(int index = 2; index <= word.length(); index++){
 			HashSet<String> trial = new HashSet<String>();
 			HashSet<String> trialReal = new HashSet<String>();
-
-			int combinations = (int)(factorial(word.length()) / factorial(word.length()-index));
+			
+			int combinations = (int) ((factorial(word.length()) / factorial(word.length()-index))/divi);
 			System.out.println("Combinations " + combinations);
 			while(combinations > 0 ){
-				StringBuilder temp = new StringBuilder(word);
+				StringBuilder temp2 = new StringBuilder(word);
 				StringBuilder b2 = new StringBuilder();
 				for(int i = 0; i < index; i++){
-					int i2 = (int)(Math.random()*temp.length());
-					b2.append(temp.charAt(i2));
-					temp.deleteCharAt(i2);	
+					int i2 = (int)(Math.random()*temp2.length());
+					b2.append(temp2.charAt(i2));
+					temp2.deleteCharAt(i2);	
 				}
 				if(!trial.contains(b2.toString())){
 					if(wordBank.contains(b2.toString()))
@@ -76,23 +97,7 @@ public class WordUnscrambler{
 		}
 		return scram3.toString();
 	}
-	public double getIterations(String word){
-		HashMap<String, Integer> tempStorage = new HashMap<String, Integer>();
-		String[] temp = word.split("");
-		int index = 1;
-		for(String t : temp){
-			if(!tempStorage.containsKey(t)){
-				tempStorage.put(t, index);
-			}else
-				tempStorage.put(t, tempStorage.get(t)+1);
-		}
-		double divi = 1;
-		for(int d : tempStorage.values()){
-			divi*=factorial(d);
-		}
-		return (factorial(word.length()) / divi );
-
-	}
+	
 	public double factorial(int f){
 		double d = 1;
 		while(f > 1){
