@@ -10,7 +10,6 @@ import java.util.Scanner;
  * 
  * 
  * 
- * 
  * PLEASE NOTE THAT NOT ALL WORDS WORK AS DICTONARY IS A DERP
  * 
  * 
