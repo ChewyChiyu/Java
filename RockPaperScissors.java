@@ -1,4 +1,3 @@
-package chiyugames.Samples;
 import java.util.Scanner;
 public class RockPaperScissors {
 	private static Scanner scan = new Scanner(System.in);
