@@ -48,7 +48,6 @@ public class SketchPanel extends JPanel{
 	frame.addMouseMotionListener(new MouseAdapter() {
         	public void mouseDragged(MouseEvent e) {
         	    if(e.getX()<XGRID&&e.getX()>0&&e.getY()<YGRID&&e.getY()>0){
-        	    	System.out.println("row " + e.getY() + " col " + e.getX());
         	    	switch(selectedColor.toString()){
         	    	case "Red" : grid[e.getY()][e.getX()].setColor(Color.red);break;
         	    	case "Orange" : grid[e.getY()][e.getX()].setColor(Color.orange);break;
@@ -56,7 +55,7 @@ public class SketchPanel extends JPanel{
         	    	case "Green" : grid[e.getY()][e.getX()].setColor(Color.green);break;
         	    	case "Blue" : grid[e.getY()][e.getX()].setColor(Color.blue);break;
         	    	case "Purple" : grid[e.getY()][e.getX()].setColor(new Color(230, 0, 172));break;
-        	    	case "White" : grid[e.getY()][e.getX()].setColor(Color.white);break;
+        	    	case "White" : grid[e.getY()][e.getX()].setColor(new Color(255,254,255));break;
         	    	case "Gray" : grid[e.getY()][e.getX()].setColor(Color.gray);break;
         	    	case "Black" : grid[e.getY()][e.getX()].setColor(Color.black);break;
 
@@ -108,7 +107,6 @@ public class SketchPanel extends JPanel{
 				case "7":selectedColor = new StringBuilder("Gray");break;
 				case "8":selectedColor = new StringBuilder("Black");break;
 				}
-				System.out.println(selectedColor);
 			});
 			this.add(b);
 		}
@@ -119,13 +117,11 @@ public class SketchPanel extends JPanel{
 	}
 	
 	public void drawGrid(Graphics g){
-		System.out.println("rows : " + grid.length);
-		System.out.println("cols : " + grid[0].length);
 		for(int row = 0; row < grid.length; row++){
 			for(int col = 0; col < grid[0].length; col++){
 				if(!grid[row][col].getColor().equals(Color.white)){
 					g.setColor(grid[row][col].getColor());
-					g.fillRect(col, row, 10, 10);			
+					g.fillOval(col, row, 10, 10);			
 				}
 
 			}
