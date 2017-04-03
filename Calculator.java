@@ -87,10 +87,23 @@ public class Calculator extends JPanel{
 			}
 		}
 		String calculation = null;
+		String contain = "+-/*";
 		String[] b2 = new String[sequence.size()];
 		int index = 0;
 		for(StringBuilder b3 : sequence.values()){
 			b2[index++] = b3.toString();
+		}
+		//Checking valid conditions
+		if(contain.contains(b2[0])||contain.contains(b2[b2.length-1])){
+			line = new StringBuilder("Err");
+			return;
+		}
+			
+		for(int i = 0; i < b2.length-1; i++){
+			if(contain.contains(b2[i])&&contain.contains(b2[i+1])){
+				line = new StringBuilder("Err");
+				return;
+			}
 		}
 		for(int i = 0 ; i < b2.length-1; i++){
 			if(b2[i].equals("+")){
@@ -117,6 +130,7 @@ public class Calculator extends JPanel{
 				}else
 					calculation = ""+(Double.parseDouble(calculation) / Double.parseDouble(b2[i+1]));
 			}
+			
 		}
 		line = new StringBuilder(calculation);
 		repaint();
