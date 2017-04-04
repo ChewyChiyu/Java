@@ -117,11 +117,12 @@ public class SketchPanel extends JPanel{
 	}
 	
 	public void drawGrid(Graphics g){
+		final int SPACER = 25;
 		for(int row = 0; row < grid.length; row++){
 			for(int col = 0; col < grid[0].length; col++){
 				if(!grid[row][col].getColor().equals(Color.white)){
 					g.setColor(grid[row][col].getColor());
-					g.fillOval(col, row, 10, 10);			
+					g.fillOval(col, row-SPACER, 10, 10);			
 				}
 
 			}
