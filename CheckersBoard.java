@@ -71,7 +71,6 @@ public class CheckersBoard extends JPanel{
 					return;
 				if(!neutralMove(primaryX , primaryY, secondaryX, secondaryY))
 					attackMove(primaryX , primaryY, secondaryX, secondaryY);
-				redTurn = !redTurn;
 			}
 
 			@Override
@@ -101,6 +100,7 @@ public class CheckersBoard extends JPanel{
 			return false;
 		}
 		if(board[y1][x1]!=null&&board[y2][x2]==null){
+			redTurn = !redTurn;
 			System.out.println("move is neutral, no lives taken");
 			board[y2][x2] = new Checker(board[y1][x1].getColor());
 			board[y1][x1] = null;
@@ -126,7 +126,8 @@ public class CheckersBoard extends JPanel{
 			blueLeft--;
 		if(board[Math.abs(y1+y2)/2][Math.abs(x1+x2)/2].getColor().equals(Color.RED))
 			redLeft--;
-		
+		redTurn = !redTurn;
+
 		board[y2][x2] = new Checker(board[y1][x1].getColor());
 		board[y1][x1] = null;
 		board[Math.abs(y1+y2)/2][Math.abs(x1+x2)/2] = null;
@@ -165,12 +166,14 @@ public class CheckersBoard extends JPanel{
 	}
 	public void checkForWinner(){
 		if(redLeft==0){
-			JOptionPane.showMessageDialog (null, "Blue has won");
+			JOptionPane.showMessageDialog (this, "Blue has won");
 			startGame();
+			repaint();
 		}
 		if(blueLeft==0){
-			JOptionPane.showMessageDialog (null, "Red has won");
+			JOptionPane.showMessageDialog (this, "Red has won");
 			startGame();
+			repaint();
 		}
 	}
 	public void drawPieces(Graphics g){
