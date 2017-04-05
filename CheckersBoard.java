@@ -7,6 +7,7 @@ import java.awt.event.MouseListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class CheckersBoard extends JPanel{
@@ -154,7 +155,14 @@ public class CheckersBoard extends JPanel{
 		checkForWinner();
 	}
 	public void checkForWinner(){
-
+		if(redLeft==0){
+			JOptionPane.showMessageDialog (null, "Blue has won");
+			startGame();
+		}
+		if(blueLeft==0){
+			JOptionPane.showMessageDialog (null, "Red has won");
+			startGame();
+		}
 	}
 	public void drawPieces(Graphics g){
 		int xBuffer = 0;
