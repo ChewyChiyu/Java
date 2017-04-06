@@ -69,8 +69,14 @@ public class SharkRunPanel extends JPanel implements Runnable{
 				@Override
 				public void run() {
 					for(int jumpIndex = 0; jumpIndex < 100; jumpIndex++){
-					player.changeVelocityY(-player.getSpeed()*10);
+					player.changeVelocityY(-player.getSpeed());
 					repaint();
+						try {
+							Thread.sleep(1);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					
 					}
 				}
 				
