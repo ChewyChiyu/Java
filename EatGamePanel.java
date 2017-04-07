@@ -35,6 +35,7 @@ public class EatGamePanel extends JPanel implements Runnable{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(null);
 		frame.pack();
+		frame.setResizable(false);
 		frame.setVisible(true);
 		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("W"),
 				"W");
