@@ -29,7 +29,7 @@ public class EatGamePanel extends JPanel implements Runnable{
 		setUpBoard();
 		addButton();
 		JFrame frame = new JFrame("Go Square Go!");
-		frame.setPreferredSize(new Dimension(500,600));
+		frame.setPreferredSize(new Dimension(510,600));
 		System.setProperty("sun.java2d.opengl", "true");
 		frame.add(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
