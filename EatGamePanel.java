@@ -117,15 +117,15 @@ public class EatGamePanel extends JPanel implements Runnable{
 		while(gameLoop){
 			updateGame();
 			try{
-				Thread.sleep(100);
+				Thread.sleep(50);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 		}
 	}
 	public void updateGame(){
-		checkForHit();
 		moveHead();
+		checkForHit();
 		foodEaten();
 		repaint();
 	}
@@ -146,8 +146,8 @@ public class EatGamePanel extends JPanel implements Runnable{
 	}
 	public void spawnFood(){
 		foodOnScreen++;
-		int foodRow = (int)(Math.random()*board.length);
-		int foodCol = (int)(Math.random()*board[0].length);
+		int foodRow = (int)(Math.random()*board.length-2)+1;
+		int foodCol = (int)(Math.random()*board[0].length-2)+1;
 		if(board[foodRow][foodCol]==0)
 			board[foodRow][foodCol] = 2; //FOOD
 	}
