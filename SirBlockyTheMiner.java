@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class SirBlockyTheMiner extends JPanel implements Runnable{
 	public boolean gameLoop;
@@ -18,9 +19,9 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 	public int eaterLength = 0;
 	public int foodOnScreen = 0;
 	public int foodEaten = 0;
-	public int rowIndex = -1;
-	public int colIndex = -1;
-	Direction d = Direction.RIGHT;
+	public boolean missedFood = false;
+	public Timer time;
+	Direction d = Direction.DOWN;
 	int[][] board = new int[50][50];
 	Color[][] background = new Color[50][50];
 	Color[][] skyBack = new Color[10][50];
@@ -87,8 +88,13 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 			}
 
 		});
+		time = new Timer(100, e->{
+			moveScreenDown();
+			checkForHit();
+		});
 		spawnFood();
 		start();
+		
 	}
 	public void addButton(){
 		JButton pause = new JButton("Pause");
@@ -104,11 +110,13 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 	}
 	public synchronized void start(){
 		t = new Thread(this);
+		time.start();
 		gameLoop = true;
 		t.start();
 	}
 	public synchronized void stop(){
 		gameLoop = false;
+		time.stop();
 		try {
 			t.join();
 		} catch (InterruptedException e) {
@@ -128,9 +136,25 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 	}
 	public void updateGame(){
 		moveHead();
-		checkForHit();
 		foodEaten();
 		repaint();
+	}
+	public void moveScreenDown(){
+		for(int row = 0; row < board.length-1; row++){
+			for(int col = 0; col < board[0].length; col++){
+				int index = board[row+1][col];
+				board[row+1][col] = board[row][col];
+				board[row][col] = index;
+				if(row==0&&board[row][col]==2){
+					missedFood = true;
+				}
+				if(row==0 && board[row][col]!=0){
+					eaterLength--;
+					board[row][col] = 0;
+				}
+				
+			}
+		}
 	}
 	public void foodEaten(){
 		int tempFood = 0;
@@ -149,8 +173,8 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 	}
 	public void spawnFood(){
 		foodOnScreen++;
-		int foodRow = (int)(Math.random()*board.length-2)+1;
-		int foodCol = (int)(Math.random()*board[0].length-2)+1;
+		int foodRow = ( board.length/2 ) +(int)(Math.random()*board.length/2);
+		int foodCol = (int)(Math.random()*board[0].length-2);
 		if(board[foodRow][foodCol]==0)
 			board[foodRow][foodCol] = 2; //FOOD
 	}
@@ -169,23 +193,24 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 				}
 			}
 		}
-		boolean death = (rowIndex==tempRowIndex&&colIndex==tempColIndex)?true:false;
-		if(tempLength<eaterLength || death){
+		boolean death = (tempColIndex==board[0].length-1||tempRowIndex==board.length-2||tempRowIndex==-1||tempColIndex==-1)?true:false;
+		if(tempLength<eaterLength || death || missedFood){
+			stop();
 			int reply = JOptionPane.showConfirmDialog(null, "You Died After Eating " + foodEaten + "\n Play Again?" , "Death", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
 				eaterLength = 0;
 				foodOnScreen = 0;
 				foodEaten = 0;
+				missedFood = false;
+				d = Direction.DOWN;
 				setUpBoard();
 				spawnFood();
-
+				start();
 			}
 			else {
 				System.exit(0);
 			}
 		}
-		rowIndex = tempRowIndex;
-		colIndex = tempColIndex;
 	}
 
 
