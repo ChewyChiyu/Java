@@ -12,7 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 @SuppressWarnings("serial")
-public class EatGamePanel extends JPanel implements Runnable{
+public class SirBlockyTheMiner extends JPanel implements Runnable{
 	public boolean gameLoop;
 	public Thread t;
 	public int eaterLength = 0;
@@ -22,14 +22,16 @@ public class EatGamePanel extends JPanel implements Runnable{
 	public int colIndex = -1;
 	Direction d = Direction.RIGHT;
 	int[][] board = new int[50][50];
+	Color[][] background = new Color[50][50];
+	Color[][] skyBack = new Color[10][50];
 	public static void main(String[] args){
-		new EatGamePanel();
+		new SirBlockyTheMiner();
 	}
-	public EatGamePanel(){
+	public SirBlockyTheMiner(){
 		setUpBoard();
 		addButton();
 		JFrame frame = new JFrame("Go Square Go!");
-		frame.setPreferredSize(new Dimension(510,600));
+		frame.setPreferredSize(new Dimension(510,630));
 		System.setProperty("sun.java2d.opengl", "true");
 		frame.add(this);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -90,7 +92,8 @@ public class EatGamePanel extends JPanel implements Runnable{
 	}
 	public void addButton(){
 		JButton pause = new JButton("Pause");
-		pause.setBounds(200, 520, 90, 30);
+		pause.setBounds(200, 30, 90, 30);
+		pause.setBackground(new Color(0, 153, 255));
 		pause.addActionListener(e ->{
 			if(gameLoop)
 				stop();
@@ -188,80 +191,112 @@ public class EatGamePanel extends JPanel implements Runnable{
 
 	public void moveHead(){
 		try{
-		for(int row = 0; row < board.length-1; row++){
-			for(int col = 0; col < board[0].length-1; col++){
-				if(board[row][col]==1){
-					if(d.equals(Direction.DOWN)){ //could of used switch statement but oh well
-						board[row][col] = -1;
-						board[row+1][col] = 1;
-						eaterLength++;
-						return;
-					}else if (d.equals(Direction.UP)){
-						board[row][col] = -1;
-						board[row-1][col] = 1;
-						eaterLength++;
-						return;
-					}else if (d.equals(Direction.LEFT)){
-						board[row][col] = -1;
-						board[row][col-1] = 1;
-						eaterLength++;
-						return;
-					}else if (d.equals(Direction.RIGHT)){
-						board[row][col] = -1;
-						board[row][col+1] = 1;
-						eaterLength++;
-						return;
-					}
+			for(int row = 0; row < board.length-1; row++){
+				for(int col = 0; col < board[0].length-1; col++){
+					if(board[row][col]==1){
+						if(d.equals(Direction.DOWN)){ //could of used switch statement but oh well
+							board[row][col] = -1;
+							board[row+1][col] = 1;
+							eaterLength++;
+							return;
+						}else if (d.equals(Direction.UP)){
+							board[row][col] = -1;
+							board[row-1][col] = 1;
+							eaterLength++;
+							return;
+						}else if (d.equals(Direction.LEFT)){
+							board[row][col] = -1;
+							board[row][col-1] = 1;
+							eaterLength++;
+							return;
+						}else if (d.equals(Direction.RIGHT)){
+							board[row][col] = -1;
+							board[row][col+1] = 1;
+							eaterLength++;
+							return;
+						}
 
+					}
 				}
 			}
-		}
 		}catch(Exception e){
 
 		}
 	}
 	public void setUpBoard(){
+		for(int row = 0; row < skyBack.length; row++){
+			for(int col = 0; col < skyBack[0].length; col++){
+				if(row > skyBack.length-3){
+					if((int)(Math.random()*2)==1){
+						skyBack[row][col] = new Color(0, 153, 51);
+					}else
+						skyBack[row][col] = new Color(0, 230, 77);
+				}else{
+					if((int)(Math.random()*2)==1){
+						skyBack[row][col] = new Color(0, 153, 255);
+					}else
+						skyBack[row][col] = new Color(128, 204, 255);
+				}
+			}
+		}
 		for(int row = 0; row < board.length; row++){
 			for(int col = 0; col < board[0].length; col++){
 				board[row][col] = 0; //FOOOOOOD
+				if((int)(Math.random()*2)==1){
+					background[row][col] = new Color(102, 53, 0);
+				}else
+					background[row][col] = new Color(153, 79, 0);
 			}
 		}
 		board[10][15] = 1; //EATER
 	}
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		drawStrings(g);
 		game(g);	
+		drawStrings(g);
 
 	}
 	public void drawStrings(Graphics g){
 		g.setFont(new Font ("Garamond", Font.BOLD , 15));
-		g.drawString("Foodies Eaten " + foodEaten , 20,550);
+		g.setColor(Color.WHITE);
+		g.drawString("Foodies Eaten " + foodEaten , 20,30);
 	}
+
 	public void game(Graphics g){
-		int xBorder = 0;
-		int yBorder = 0;
+		int xBorderZ = 0;
+		int yBorderZ = 0;
 		final int SPACER = 10;
+		for(int row = 0; row < skyBack.length; row++){
+			for(int col = 0; col < skyBack[0].length; col++){
+				g.setColor(skyBack[row][col]);
+				g.fillRect(xBorderZ, yBorderZ, SPACER, SPACER);
+				xBorderZ+=SPACER;
+			}
+			xBorderZ = 0;
+			yBorderZ+=SPACER;	
+		}
+		int xBorder = 0;
+		int yBorder = 100;
 		for(int row = 0; row < board.length; row++){
 			for(int col = 0; col < board[0].length; col++){
-				g.setColor(Color.BLACK);
+				g.setColor(background[row][col]);
 				if(board[row][col]==1)
-					g.setColor(Color.RED);
+					g.setColor(new Color(153, 0, 0));
 				if(board[row][col]==-1)
-					g.setColor(Color.WHITE);
+					g.setColor(new Color(51, 26, 0));
 				if(board[row][col]==2)
-					g.setColor(Color.BLUE);
-				g.fillRect(xBorder, yBorder, SPACER, SPACER);
+					g.setColor(new Color(122, 122, 82));
+					g.fillRect(xBorder, yBorder, SPACER, SPACER);
 
-				xBorder+=SPACER;
+					xBorder+=SPACER;
 
+				}
+				xBorder = 0;
+				yBorder+=SPACER;	
 			}
-			xBorder = 0;
-			yBorder+=SPACER;	
-		}
 
+		}
 	}
-}
 
 enum Direction {
 	RIGHT, LEFT, UP, DOWN;
