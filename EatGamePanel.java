@@ -18,6 +18,8 @@ public class EatGamePanel extends JPanel implements Runnable{
 	public int eaterLength = 0;
 	public int foodOnScreen = 0;
 	public int foodEaten = 0;
+	public int rowIndex = -1;
+	public int colIndex = -1;
 	Direction d = Direction.RIGHT;
 	int[][] board = new int[50][50];
 	public static void main(String[] args){
@@ -121,8 +123,8 @@ public class EatGamePanel extends JPanel implements Runnable{
 		}
 	}
 	public void updateGame(){
-		moveHead();
 		checkForHit();
+		moveHead();
 		foodEaten();
 		repaint();
 	}
@@ -150,19 +152,21 @@ public class EatGamePanel extends JPanel implements Runnable{
 	}
 	public void checkForHit(){
 		int tempLength = 0;
-		int redIndex = -1; int redIndex2 = -1;
+		int tempRowIndex = -1;
+		int tempColIndex = -1;
 		for(int row = 0; row < board.length; row++){
 			for(int col = 0; col < board[0].length; col++){
 				if(board[row][col]==-1){
 					tempLength++;
 				}
 				if(board[row][col]==1){
-					redIndex = col;
-					redIndex2 = row;
+					tempRowIndex = row;
+					tempColIndex = col;
 				}
 			}
 		}
-		if(tempLength<eaterLength || redIndex==49 || redIndex2 == 49 || redIndex == 0 || redIndex2 == 0){
+		boolean death = (rowIndex==tempRowIndex&&colIndex==tempColIndex)?true:false;
+		if(tempLength<eaterLength || death){
 			int reply = JOptionPane.showConfirmDialog(null, "You Died After Eating " + foodEaten + "\n Play Again?" , "Death", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
 				eaterLength = 0;
@@ -176,10 +180,13 @@ public class EatGamePanel extends JPanel implements Runnable{
 				System.exit(0);
 			}
 		}
+		rowIndex = tempRowIndex;
+		colIndex = tempColIndex;
 	}
 
 
 	public void moveHead(){
+		try{
 		for(int row = 0; row < board.length-1; row++){
 			for(int col = 0; col < board[0].length-1; col++){
 				if(board[row][col]==1){
@@ -207,6 +214,9 @@ public class EatGamePanel extends JPanel implements Runnable{
 
 				}
 			}
+		}
+		}catch(Exception e){
+
 		}
 	}
 	public void setUpBoard(){
