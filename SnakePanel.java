@@ -2,11 +2,11 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
 
 import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -17,39 +17,52 @@ public class SnakePanel extends JPanel implements Runnable {
 	boolean isRunning;
 	Directions d  = Directions.RIGHT;
 	int snakeLength = 0;
-	int snakeHeadX = 100;
-	int snakeHeadY = 100;
-	final int PIECESIZE = 100;
+	volatile int snakeHeadX = 100;
+	volatile int snakeHeadY = 100;
+	volatile int foodX;
+	volatile int foodY;
+	final int FOOD_SIZE = 20;
+	final int PIECESIZE = 20;
 	HashMap<Integer, SnakeSegment> snake = new HashMap<Integer, SnakeSegment>();
 	public static void main(String[] args){
 		new SnakePanel();
 	}
 	public SnakePanel(){
 		setUpPanel();
+		addButton();
 		setUpKeys();
 		setUpSnake();
+		spawnFood();
 		start();
+	}
+	public void addButton(){
+		JButton pause = new JButton("Pause");
+		pause.setBounds(0, 0, 90, 30);
+		pause.setBackground(Color.WHITE);
+		pause.addActionListener(e ->{
+			if(isRunning)
+				stop();
+			else
+				start();
+		});
+		this.add(pause);
+	}
+	public void spawnFood(){
+		foodX = (int)(Math.random()*500)+50;
+		foodY = (int)(Math.random()*500)+50;
+		
+		
+		if(hitHead(foodX+FOOD_SIZE/2,foodY+FOOD_SIZE/2)){
+			spawnFood();
+			return;
+		}
+			
+		
 		
 	}
 	public void setUpSnake(){
 		snake.put(snakeLength++ , new SnakeSegment(Directions.RIGHT));
 		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-		addToSnake();
-
-
-
 	}
 	public void setUpKeys(){
 		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("W"),
@@ -103,9 +116,10 @@ public class SnakePanel extends JPanel implements Runnable {
 	}
 	public void setUpPanel(){
 		JFrame frame = new JFrame("Snake!");
-		frame.setPreferredSize(new Dimension(Toolkit.getDefaultToolkit().getScreenSize()));
+		frame.setPreferredSize(new Dimension(600,600));
 		System.setProperty("sun.java2d.opengl", "true");
 		frame.add(this);
+		this.setBackground(Color.BLACK);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLayout(null);
 		frame.pack();
@@ -118,12 +132,11 @@ public class SnakePanel extends JPanel implements Runnable {
 		t.start();
 	}
 	public synchronized void stop(){
+		isRunning = false;
 		try{
 			t.join();
 		}catch(Exception e){
 			e.printStackTrace();
-		}finally{
-			isRunning = false;
 		}
 	}
 	@Override
@@ -139,7 +152,14 @@ public class SnakePanel extends JPanel implements Runnable {
 	}
 	public void update(){
 		moveSnake();
+		checkIfHitHead();
 		repaint();
+	}
+	public void checkIfHitHead(){
+		if(hitHead(foodX+FOOD_SIZE/2,foodY+FOOD_SIZE/2)){
+			spawnFood();
+			addToSnake();
+		}
 	}
 	public void addToSnake(){
 		snake.put(snakeLength, new SnakeSegment(snake.get(snakeLength-1).getDirections()));
@@ -147,37 +167,46 @@ public class SnakePanel extends JPanel implements Runnable {
 	}
 	public void moveSnake(){
 		snake.get(0).setDirections(d);
-		int diff = 0;
-		for(int i = 0; i < snakeLength-1; i++){
-			if(!snake.get(i).getDirections().equals(snake.get(i+1).getDirections())){
-				diff++;
-			}
-		}
-		System.out.println("Differences : " + diff);
 		Directions temp = null;
 		for(int i = snakeLength-2; i>=0; i--){
 			if(!snake.get(i).getDirections().equals(temp)&&!snake.get(i+1).getDirections().equals(snake.get(i).getDirections())){
 			snake.get(i+1).setDirections(snake.get(i).getDirections());
 			temp = snake.get(i).getDirections();
-			}
-			System.out.println(i);
-		
+			}		
 		}
 	}
 	public void paintComponent(Graphics g){
 		super.paintComponent(g);
-		printSnake();
 		drawSnake(g);
+		drawFood(g);
 	}
-	public void printSnake(){
-		System.out.println("\n\n");
-		int index = 0;
-		for(SnakeSegment s : snake.values()){
-			System.out.println("Snake segment " + index++ + " direction : " + s.getDirections() );
+	public void drawFood(Graphics g){
+		g.setColor(Color.YELLOW);
+		g.fillOval(foodX, foodY, FOOD_SIZE, FOOD_SIZE);
+	}
+	public boolean hitHead(int objX, int objY){
+		int sHX1 = snakeHeadX;
+		int sHY1 = snakeHeadY;
+		int sHX2 = snakeHeadX+PIECESIZE;
+		int sHY2 = snakeHeadY+PIECESIZE;
+		if(objX>sHX1&&objX<sHX2&&objY>sHY1&&objY<sHY2){
+			return true;
 		}
+		return false;
 	}
-	public void drawSnake(Graphics g){
+	public boolean hitTail(int sHS1, int sHS2){
+		int sTX1 = sHS1;
+		int sTY1 = sHS2;
+		int sTX2 = sHS1+PIECESIZE;
+		int sTY2 = sHS2+PIECESIZE;
+		if(foodX+FOOD_SIZE/2>sTX1&&foodX+FOOD_SIZE/2<sTX2&&foodY+FOOD_SIZE/2>sTY1&&foodY+FOOD_SIZE/2<sTY2){
+			return true;
+		}
+		return false;
+	}
+	public synchronized void drawSnake(Graphics g){
 		g.setFont(new Font ("Garamond", Font.BOLD , 20));
+		try{
 		switch(snake.get(0).getDirections()){
 		case UP:   
 			snakeHeadY-=PIECESIZE;
@@ -192,10 +221,11 @@ public class SnakePanel extends JPanel implements Runnable {
 			snakeHeadX+=PIECESIZE;
 			break;
 		}
-		g.fillRect(snakeHeadX, snakeHeadY, PIECESIZE, PIECESIZE);
+		}catch(Exception e){
+			
+		}
 		g.setColor(Color.WHITE);
-		g.drawString("0", snakeHeadX + PIECESIZE/2, snakeHeadY + PIECESIZE/2);
-		g.setColor(Color.BLACK);
+		g.fillOval(snakeHeadX, snakeHeadY, PIECESIZE, PIECESIZE);
 		int snakeSegX = snakeHeadX;
 		int snakeSegY = snakeHeadY;
 		
@@ -216,10 +246,17 @@ public class SnakePanel extends JPanel implements Runnable {
 				snakeSegX-=PIECESIZE;
 				break;
 			}
-			g.fillRect(snakeSegX, snakeSegY, PIECESIZE, PIECESIZE);
+			if(hitHead(snakeSegX+PIECESIZE/2, snakeSegY+PIECESIZE/2)||snakeHeadX<0||snakeHeadX>600||snakeHeadY<0||snakeHeadY>600){
+				stop();
+				g.setFont(new Font ("Garamond", Font.BOLD , 20));
+				g.setColor(Color.WHITE);
+				g.drawString("You Died" , 200,30);
+			}
+			if(hitTail(snakeSegX,snakeSegY)){
+				spawnFood();
+			}
+			g.fillOval(snakeSegX, snakeSegY, PIECESIZE, PIECESIZE);
 			g.setColor(Color.WHITE);
-			g.drawString(""+(index-1), snakeSegX+ PIECESIZE/2, snakeSegY+PIECESIZE/2);
-			g.setColor(Color.BLACK);
 			}
 		}
 	}
