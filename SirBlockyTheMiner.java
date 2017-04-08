@@ -98,7 +98,7 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 	}
 	public void addButton(){
 		JButton pause = new JButton("Pause");
-		pause.setBounds(200, 30, 90, 30);
+		pause.setBounds(300, 30, 90, 30);
 		pause.setBackground(new Color(0, 153, 255));
 		JButton restart = new JButton("Restart");
 		restart.setBounds(400, 30, 90, 30);
@@ -265,14 +265,8 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 		for(int row = 0; row < skyBack.length; row++){
 			for(int col = 0; col < skyBack[0].length; col++){
 				if(row > skyBack.length-3){
-					if((int)(Math.random()*2)==1){
-						skyBack[row][col] = new Color(0, 153, 51);
-					}else
 						skyBack[row][col] = new Color(0, 230, 77);
 				}else{
-					if((int)(Math.random()*2)==1){
-						skyBack[row][col] = new Color(0, 153, 255);
-					}else
 						skyBack[row][col] = new Color(128, 204, 255);
 				}
 			}
@@ -295,9 +289,9 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 
 	}
 	public void drawStrings(Graphics g){
-		g.setFont(new Font ("Garamond", Font.BOLD , 15));
+		g.setFont(new Font ("Garamond", Font.BOLD , 20));
 		g.setColor(Color.WHITE);
-		g.drawString("Foodies Eaten " + foodEaten , 20,30);
+		g.drawString("Foodies Eaten : " + foodEaten , 20,30);
 	}
 
 	public void game(Graphics g){
@@ -319,7 +313,7 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 			for(int col = 0; col < board[0].length; col++){
 				g.setColor(background[row][col]);
 				if(board[row][col]==1)
-					g.setColor(new Color(153, 0, 0));
+					g.setColor(new Color(204, 51, 0));
 				if(board[row][col]==-1)
 					g.setColor(new Color(51, 26, 0));
 				if(board[row][col]==2)
