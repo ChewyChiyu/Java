@@ -11,6 +11,7 @@ import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.Timer;
 @SuppressWarnings("serial")
 public class SnakePanel extends JPanel implements Runnable {
 	Thread t;
@@ -23,6 +24,7 @@ public class SnakePanel extends JPanel implements Runnable {
 	volatile int foodY;
 	final int FOOD_SIZE = 20;
 	final int PIECESIZE = 20;
+	Timer time;
 	HashMap<Integer, SnakeSegment> snake = new HashMap<Integer, SnakeSegment>();
 	public static void main(String[] args){
 		new SnakePanel();
@@ -113,6 +115,9 @@ public class SnakePanel extends JPanel implements Runnable {
 			}
 
 		});
+		time = new Timer(1, e->{
+			checkIfHitHead();
+		});
 	}
 	public void setUpPanel(){
 		JFrame frame = new JFrame("Snake!");
@@ -130,9 +135,11 @@ public class SnakePanel extends JPanel implements Runnable {
 		isRunning = true;
 		t = new Thread(this);
 		t.start();
+		time.start();
 	}
 	public synchronized void stop(){
 		isRunning = false;
+		time.stop();
 		try{
 			t.join();
 		}catch(Exception e){
@@ -152,7 +159,6 @@ public class SnakePanel extends JPanel implements Runnable {
 	}
 	public void update(){
 		moveSnake();
-		checkIfHitHead();
 		repaint();
 	}
 	public void checkIfHitHead(){
