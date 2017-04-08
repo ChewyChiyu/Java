@@ -100,12 +100,25 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 		JButton pause = new JButton("Pause");
 		pause.setBounds(200, 30, 90, 30);
 		pause.setBackground(new Color(0, 153, 255));
+		JButton restart = new JButton("Restart");
+		restart.setBounds(400, 30, 90, 30);
+		restart.setBackground(new Color(0, 153, 255));
 		pause.addActionListener(e ->{
 			if(gameLoop)
 				stop();
 			else
 				start();
 		});
+		restart.addActionListener(e -> {
+			eaterLength = 0;
+			foodOnScreen = 0;
+			foodEaten = 0;
+			missedFood = false;
+			d = Direction.DOWN;
+			setUpBoard();
+			spawnFood();
+		});
+		this.add(restart);
 		this.add(pause);
 	}
 	public synchronized void start(){
@@ -173,9 +186,9 @@ public class SirBlockyTheMiner extends JPanel implements Runnable{
 	}
 	public void spawnFood(){
 		foodOnScreen++;
-		int foodRow = ( board.length/2 ) +(int)(Math.random()*board.length/2);
-		int foodCol = (int)(Math.random()*board[0].length-2);
-		if(board[foodRow][foodCol]==0)
+		int foodRow = (board.length/2 ) +(int)(Math.random()*board.length/2);
+		int foodCol = (int)(Math.random()*board[0].length);
+		if(board[foodRow][foodCol]!=-1&&board[foodRow][foodCol]!=1)
 			board[foodRow][foodCol] = 2; //FOOD
 	}
 	public void checkForHit(){
