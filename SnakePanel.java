@@ -53,7 +53,10 @@ public class SnakePanel extends JPanel implements Runnable {
 		foodX = (int)(Math.random()*500)+50;
 		foodY = (int)(Math.random()*500)+50;
 		
-		
+		if(foodX%2!=1||foodY%2!=1){
+			spawnFood();
+			return;
+		}
 		if(hitHead(foodX+FOOD_SIZE/2,foodY+FOOD_SIZE/2)){
 			spawnFood();
 			return;
