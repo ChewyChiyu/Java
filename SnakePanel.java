@@ -41,6 +41,13 @@ public class SnakePanel extends JPanel implements Runnable {
 		addToSnake();
 		addToSnake();
 		addToSnake();
+		addToSnake();
+		addToSnake();
+		addToSnake();
+		addToSnake();
+		addToSnake();
+		addToSnake();
+
 
 
 	}
@@ -124,7 +131,7 @@ public class SnakePanel extends JPanel implements Runnable {
 		while(isRunning){
 			update();
 			try{
-				Thread.sleep(1000);
+				Thread.sleep(100);
 			}catch(Exception e){
 				e.printStackTrace();
 			}
