@@ -52,7 +52,6 @@ public class SnakePanel extends JPanel implements Runnable {
 		restart.setBounds(100, 0, 90, 30);
 		restart.setBackground(Color.WHITE);
 		restart.addActionListener(e->{
-			stop();
 			snake.clear();
 			d = Directions.DOWN;
 			snakeLength = 0;
@@ -60,7 +59,6 @@ public class SnakePanel extends JPanel implements Runnable {
 			snakeHeadY = 100;
 			setUpSnake();
 			spawnFood();
-			start();
 		});
 		this.add(restart);
 		this.add(pause);
@@ -157,8 +155,8 @@ public class SnakePanel extends JPanel implements Runnable {
 		time.start();
 	}
 	public synchronized void stop(){
-		isRunning = false;
 		time.stop();
+		isRunning = false;
 		try{
 			t.join();
 		}catch(Exception e){
@@ -185,21 +183,20 @@ public class SnakePanel extends JPanel implements Runnable {
 		if(dead){
 				int reply = JOptionPane.showConfirmDialog(null, "You Died" + "\n Play Again?" , "Death", JOptionPane.YES_NO_OPTION);
 				if (reply == JOptionPane.YES_OPTION) {
+					snake.clear();
 					dead = false;
 					d = Directions.DOWN;
-					snake.clear();
 					snakeLength = 0;
 					snakeHeadX = 100;
 					snakeHeadY = 100;
 					setUpSnake();
 					spawnFood();
-					start();
 					return;
 				}
 				else {
 					System.exit(0);
 				}
-				stop();
+				
 			}
 	}
 	public void checkIfHitHead(){
