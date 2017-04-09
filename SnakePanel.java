@@ -4,11 +4,11 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.util.HashMap;
-
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
@@ -16,6 +16,7 @@ import javax.swing.Timer;
 public class SnakePanel extends JPanel implements Runnable {
 	Thread t;
 	boolean isRunning;
+	boolean dead = false;
 	Directions d  = Directions.RIGHT;
 	int snakeLength = 0;
 	volatile int snakeHeadX = 100;
@@ -47,6 +48,21 @@ public class SnakePanel extends JPanel implements Runnable {
 			else
 				start();
 		});
+		JButton restart = new JButton("Restart");
+		restart.setBounds(100, 0, 90, 30);
+		restart.setBackground(Color.WHITE);
+		restart.addActionListener(e->{
+			stop();
+			snake.clear();
+			d = Directions.DOWN;
+			snakeLength = 0;
+			snakeHeadX = 100;
+			snakeHeadY = 100;
+			setUpSnake();
+			spawnFood();
+			start();
+		});
+		this.add(restart);
 		this.add(pause);
 	}
 	public void spawnFood(){
@@ -162,7 +178,29 @@ public class SnakePanel extends JPanel implements Runnable {
 	}
 	public void update(){
 		moveSnake();
+		checkIfDead();
 		repaint();
+	}
+	public void checkIfDead(){
+		if(dead){
+				int reply = JOptionPane.showConfirmDialog(null, "You Died" + "\n Play Again?" , "Death", JOptionPane.YES_NO_OPTION);
+				if (reply == JOptionPane.YES_OPTION) {
+					dead = false;
+					d = Directions.DOWN;
+					snake.clear();
+					snakeLength = 0;
+					snakeHeadX = 100;
+					snakeHeadY = 100;
+					setUpSnake();
+					spawnFood();
+					start();
+					return;
+				}
+				else {
+					System.exit(0);
+				}
+				stop();
+			}
 	}
 	public void checkIfHitHead(){
 		if(hitHead(foodX+FOOD_SIZE/2,foodY+FOOD_SIZE/2)){
@@ -256,10 +294,7 @@ public class SnakePanel extends JPanel implements Runnable {
 				break;
 			}
 			if(hitHead(snakeSegX+PIECESIZE/2, snakeSegY+PIECESIZE/2)||snakeHeadX<0||snakeHeadX>600||snakeHeadY<0||snakeHeadY>600){
-				stop();
-				g.setFont(new Font ("Garamond", Font.BOLD , 20));
-				g.setColor(Color.WHITE);
-				g.drawString("You Died" , 200,30);
+				dead = true;
 			}
 			if(hitTail(snakeSegX,snakeSegY)){
 				spawnFood();
