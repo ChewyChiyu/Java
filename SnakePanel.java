@@ -290,7 +290,7 @@ public class SnakePanel extends JPanel implements Runnable {
 				snakeSegX-=PIECESIZE;
 				break;
 			}
-			if(hitHead(snakeSegX+PIECESIZE/2, snakeSegY+PIECESIZE/2)||snakeHeadX<0||snakeHeadX>600||snakeHeadY<0||snakeHeadY>600){
+			if(hitHead(snakeSegX+PIECESIZE/2, snakeSegY+PIECESIZE/2)||snakeHeadX<0||snakeHeadX>580||snakeHeadY<0||snakeHeadY>580){
 				dead = true;
 			}
 			if(hitTail(snakeSegX,snakeSegY)){
