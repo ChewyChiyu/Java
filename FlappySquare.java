@@ -83,7 +83,7 @@ public class FlappySquare extends JPanel implements Runnable{
 	public synchronized void jump(){
 		Thread jump = new Thread(new Runnable(){
 			public void run(){
-				for(int index = 0; index < 20; index++){
+				for(int index = 0; index < 15; index++){
 					flappy.changeY(-7);
 					try{
 						Thread.sleep(1);	
@@ -210,13 +210,12 @@ public class FlappySquare extends JPanel implements Runnable{
 	}
 	public synchronized void upDateScore(int x, int y){
 		int flapX1 = flappy.getX();
-		int flapX2 = flappy.getX() + (int) (flappy.SPACER*2.5);
+		int flapX2 = flappy.getX() + (int) (flappy.SPACER*4);
 		int flapY1 = flappy.getY();
-		int flapY2 = flappy.getY() + (int) (flappy.SPACER*2.5);
+		int flapY2 = flappy.getY() + (int) (flappy.SPACER*4);
 
 		if(x>flapX1&&x<flapX2&&y>flapY1&&y<flapY2&&canScore){
 			score++;
-			System.out.println("nice");
 			canScore = false;
 		}
 
