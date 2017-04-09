@@ -214,9 +214,9 @@ public class FlappySquare extends JPanel implements Runnable{
 	}
 	public synchronized void upDateScore(int x, int y){
 		int flapX1 = flappy.getX();
-		int flapX2 = flappy.getX() + (int) (flappy.SPACER*4);
+		int flapX2 = flappy.getX() + (int) (flappy.SPACER*4.5);
 		int flapY1 = flappy.getY();
-		int flapY2 = flappy.getY() + (int) (flappy.SPACER*4);
+		int flapY2 = flappy.getY() + (int) (flappy.SPACER*4.5);
 
 		if(x>flapX1&&x<flapX2&&y>flapY1&&y<flapY2&&canScore){
 			score++;
