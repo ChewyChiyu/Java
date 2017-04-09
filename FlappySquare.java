@@ -128,7 +128,11 @@ public class FlappySquare extends JPanel implements Runnable{
 		if(hit){			//I will do this tomorrow LOL
 			int reply = JOptionPane.showConfirmDialog(null, "You Died with a Score of " + score + "\n Play Again?" , "Death", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
-				System.exit(0);
+				rectangles.clear();
+				flappy = new Square();
+				setUpRectangles();
+				score = 0;
+				hit = false;
 			}
 			else {
 				System.exit(0);
@@ -216,7 +220,7 @@ public class FlappySquare extends JPanel implements Runnable{
 
 		if(x>flapX1&&x<flapX2&&y>flapY1&&y<flapY2&&canScore){
 			score++;
-			canScore = false;
+ 			canScore = false;
 		}
 
 
