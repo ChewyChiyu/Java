@@ -20,7 +20,7 @@ public class FlappySquare extends JPanel implements Runnable{
 	final int YBUFFER = 900;
 	final int XBUFFER = 1300;
 	Timer scoring;
-	boolean canScore = true;
+	volatile boolean canScore = true;
 	boolean hit = false;
 	boolean isRunning;
 	Square flappy = new Square();
@@ -74,7 +74,7 @@ public class FlappySquare extends JPanel implements Runnable{
 
 		});
 		scoring = new Timer(2500, e->{
-			if(!canScore){				//2.5 second delay for scoring
+			if(!canScore){				//2.0 second delay for scoring
 				canScore = true;
 			}
 		});
@@ -187,7 +187,7 @@ public class FlappySquare extends JPanel implements Runnable{
 			try{
 				Rectangle top = rectangles.get(index++);
 				Rectangle bottom = rectangles.get(index++);
-				upDateScore(top.getXPos()+top.getWidth()/2, top.getHeight()+top.getWidth()/2);
+				upDateScore(top.getXPos()+top.getWidth()/2, top.getHeight()+top.getWidth());
 				hitAnyWalls(top.getXPos(),top.getHeight(), bottom.getHeight(), top.getWidth());
 				g.fillRect(top.getXPos(), 0, top.getWidth(), top.getHeight());
 				g.fillRect(bottom.getXPos(), YBUFFER-bottom.getHeight(), bottom.getWidth(), bottom.getHeight());
@@ -214,9 +214,9 @@ public class FlappySquare extends JPanel implements Runnable{
 	}
 	public synchronized void upDateScore(int x, int y){
 		int flapX1 = flappy.getX();
-		int flapX2 = flappy.getX() + (int) (flappy.SPACER*4.5);
+		int flapX2 = flappy.getX() + (int) (flappy.SPACER);
 		int flapY1 = flappy.getY();
-		int flapY2 = flappy.getY() + (int) (flappy.SPACER*4.5);
+		int flapY2 = flappy.getY() + (int) (flappy.SPACER);
 
 		if(x>flapX1&&x<flapX2&&y>flapY1&&y<flapY2&&canScore){
 			score++;
@@ -235,7 +235,7 @@ class Square{
 	public Square(){
 		xPos = 100;
 		yPos = 100;
-		SPACER = 25;
+		SPACER = 50;
 	}
 	public void changeX(int inc){
 		xPos += inc;
