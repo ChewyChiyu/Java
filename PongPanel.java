@@ -157,7 +157,7 @@ public class PongPanel extends JPanel implements Runnable {
 		int playerOneY1 = playerOne.getYPos();
 		int playerOneY2 = playerOne.getYPos() + playerOne.getHeight();
 		if(ball.getXPos() >= playerOneX1 && ball.getXPos() <= playerOneX2 && ball.getYPos() > playerOneY1 && ball.getYPos() < playerOneY2){
-			ball.changeXVelocity(-ball.getXVelocity()+playerOne.getXVelocity());
+			ball.changeXVelocity(ball.getXVelocity()+playerOne.getXVelocity());
 			ball.changeYVelocity(-ball.getYVelocity());
 		}
 		int playerTwoX1 = playerTwo.getXPos();
@@ -165,7 +165,7 @@ public class PongPanel extends JPanel implements Runnable {
 		int playerTwoY1 = playerTwo.getYPos() - 10; //Buffer
 		int playerTwoY2 = playerTwo.getYPos() + playerTwo.getHeight();
 		if(ball.getXPos() >= playerTwoX1 && ball.getXPos() <= playerTwoX2 && ball.getYPos() > playerTwoY1 && ball.getYPos() < playerTwoY2){
-			ball.changeXVelocity(-ball.getXVelocity()+playerTwo.getXVelocity());
+			ball.changeXVelocity(ball.getXVelocity()+playerTwo.getXVelocity());
 			ball.changeYVelocity(-ball.getYVelocity());
 		}
 
