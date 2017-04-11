@@ -10,9 +10,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 @SuppressWarnings("serial")	
-public class PongPanel extends JPanel{
-	Thread player1;
-	Thread player2;
+public class PongPanel extends JPanel implements Runnable {
+	Thread game;
 	boolean isRunning;
 	Paddle playerOne = new Paddle(100,30);
 	Paddle playerTwo = new Paddle(100,530);
@@ -81,61 +80,36 @@ public class PongPanel extends JPanel{
 
 	}
 	public synchronized void start(){
-		player1 = new Thread(new Runnable(){
-			public void run(){
-				while(isRunning){
-					updatePlayer1();
-					try{
-						Thread.sleep(10);
-					}catch(Exception e){
-
-					}
-				}
-			}
-		});
-		player2 = new Thread(new Runnable(){
-			public void run(){
-				while(isRunning){
-					updatePlayer2();
-					try{
-						Thread.sleep(10);
-					}catch(Exception e){
-
-					}
-				}
-			}
-		});
+		game = new Thread(this);
 		isRunning = true;
-		player1.start();
-		player2.start();
+		game.start();
 	}
 	public synchronized void stop(){
 		try{
 			isRunning = false;
-			player1.join();
-			player2.join();
+			game.join();
 		}catch(Exception e){
 
 		}
 	}
-	
-	public void updatePlayer1(){
-		checkForPlayer1Hit();
-		checkForBoardHit();
+	public void run(){
+		while(isRunning){
+			updateGame();
+			try{
+				Thread.sleep(10);
+			}catch(Exception e){
+
+			}
+		}
+	}
+	public void updateGame(){
+		updatePaddleLocation();
 		updateBallLocation();
-		updatePlayer1Location();
+		checkForHit();
 		checkForWin();
 		repaint();
 	}
-	public void updatePlayer2(){
-		checkForPlayer2Hit();
-		checkForBoardHit();
-		updateBallLocation();
-		updatePlayer2Location();
-		checkForWin();
-		repaint();
-	}
-	public synchronized void checkForWin(){
+	public void checkForWin(){
 		if(playerOneScore>=11){
 			int reply = JOptionPane.showConfirmDialog(null, "Player One Wins!" + "\n Play Again?" , "Win", JOptionPane.YES_NO_OPTION);
 			if (reply == JOptionPane.YES_OPTION) {
@@ -161,28 +135,7 @@ public class PongPanel extends JPanel{
 			}
 		}
 	}
-	public void checkForPlayer1Hit(){
-		int playerOneX1 = playerOne.getXPos();
-		int playerOneX2 = playerOne.getXPos() + playerOne.getWidth();
-		int playerOneY1 = playerOne.getYPos();
-		int playerOneY2 = playerOne.getYPos() + playerOne.getHeight();
-		if(ball.getXPos() >= playerOneX1 && ball.getXPos() <= playerOneX2 && ball.getYPos() > playerOneY1 && ball.getYPos() < playerOneY2){
-			ball.changeXVelocity(ball.getXVelocity()+playerOne.getXVelocity());
-			ball.changeYVelocity(-ball.getYVelocity());
-		}
-	}
-	public void checkForPlayer2Hit(){
-		int playerTwoX1 = playerTwo.getXPos();
-		int playerTwoX2 = playerTwo.getXPos() + playerTwo.getWidth();
-		int playerTwoY1 = playerTwo.getYPos() - 10; //Buffer
-		int playerTwoY2 = playerTwo.getYPos() + playerTwo.getHeight();
-		if(ball.getXPos() >= playerTwoX1 && ball.getXPos() <= playerTwoX2 && ball.getYPos() > playerTwoY1 && ball.getYPos() < playerTwoY2){
-			ball.changeXVelocity(ball.getXVelocity()+playerTwo.getXVelocity());
-			ball.changeYVelocity(-ball.getYVelocity());
-		}
-
-	}
-	public synchronized void checkForBoardHit(){
+	public void checkForHit(){
 
 		if(ball.getXPos() <= 0 || ball.getXPos() >= WIDTH ){
 			ball.changeXVelocity(-ball.getXVelocity());
@@ -196,28 +149,45 @@ public class PongPanel extends JPanel{
 				playerOneScore++; 
 				ball.reset();
 			}
+
 		}
+
+		int playerOneX1 = playerOne.getXPos();
+		int playerOneX2 = playerOne.getXPos() + playerOne.getWidth();
+		int playerOneY1 = playerOne.getYPos();
+		int playerOneY2 = playerOne.getYPos() + playerOne.getHeight();
+		if(ball.getXPos() >= playerOneX1 && ball.getXPos() <= playerOneX2 && ball.getYPos() > playerOneY1 && ball.getYPos() < playerOneY2){
+			ball.changeXVelocity(ball.getXVelocity()+playerOne.getXVelocity());
+			ball.changeYVelocity(-ball.getYVelocity());
+		}
+		int playerTwoX1 = playerTwo.getXPos();
+		int playerTwoX2 = playerTwo.getXPos() + playerTwo.getWidth();
+		int playerTwoY1 = playerTwo.getYPos() - 10; //Buffer
+		int playerTwoY2 = playerTwo.getYPos() + playerTwo.getHeight();
+		if(ball.getXPos() >= playerTwoX1 && ball.getXPos() <= playerTwoX2 && ball.getYPos() > playerTwoY1 && ball.getYPos() < playerTwoY2){
+			ball.changeXVelocity(ball.getXVelocity()+playerTwo.getXVelocity());
+			ball.changeYVelocity(-ball.getYVelocity());
+		}
+
+
 	}
-	public synchronized void updateBallLocation(){
+	public void updateBallLocation(){
 		ball.changeXPos(ball.getXVelocity());
 		ball.changeYPos(ball.getYVelocity());
 	}
-	public void updatePlayer1Location(){
+	public void updatePaddleLocation(){
 		if(playerOne.getXPos()+playerOne.getWidth()>WIDTH){
 			playerOne.changeXPos(-5);
 		}
 		if(playerOne.getXPos()<0){
 			playerOne.changeXPos(5);
-		}
-		playerOne.changeXPos(playerOne.getXVelocity());
-	}
-	public void updatePlayer2Location(){
-		if(playerTwo.getXPos()+playerTwo.getWidth()>WIDTH){
+		}if(playerTwo.getXPos()+playerTwo.getWidth()>WIDTH){
 			playerTwo.changeXPos(-5);
 		}
 		if(playerTwo.getXPos()<0){
 			playerTwo.changeXPos(5);
 		}
+		playerOne.changeXPos(playerOne.getXVelocity());
 		playerTwo.changeXPos(playerTwo.getXVelocity());
 	}
 	public void paintComponent(Graphics g){
