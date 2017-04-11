@@ -94,6 +94,18 @@ public class PopTheLockPanel extends JPanel implements Runnable{
 				lockAngleSpeed*=1.1;
 				break;
 			}
+		}else if(Math.abs(keyAngle)<20 && Math.abs(lockAngle)>340 || Math.abs(keyAngle)>340 && Math.abs(lockAngle)< 20){
+			totalHits++;
+			switch((int)(Math.random()*2)){
+			case 0 : 
+				keyAngleSpeed*=-1.1;
+				lockAngleSpeed*=-1.1;
+				break;
+			case 1 : 
+				keyAngleSpeed*=1.1;
+				lockAngleSpeed*=1.1;
+				break;
+			}
 		}else
 			hitMiss();
 	}
