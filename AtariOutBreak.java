@@ -2,13 +2,16 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.KeyStroke;
 @SuppressWarnings("serial")
 public class AtariOutBreak extends JPanel implements Runnable{
 	Thread t;
@@ -32,16 +35,18 @@ public class AtariOutBreak extends JPanel implements Runnable{
 		int wid = WIDTH-50; //5ddd0 pixel buffer
 		int xBuffer = 0;
 		int yBuffer = 0;
+		byte type = 0; 
 		for(int col = 0; col < 5; col++){
 			int height = 0;
 			while(wid>=0){
-				byte type = 0; //will random later
 				Block b = new Block(xBuffer, yBuffer, type);
 				height = b.getHeight();
 				blocks.add(b);
 				xBuffer+=(b.getWidth()+5); // Spacing
 				wid-=(b.getWidth()+5);
+
 			}
+			type++;
 			yBuffer+= (height + 5); //Spacing
 			wid = WIDTH - 50;
 			xBuffer = 0;
@@ -56,37 +61,49 @@ public class AtariOutBreak extends JPanel implements Runnable{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
 		frame.setResizable(false);
-		frame.addKeyListener(new KeyListener(){
+	
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released A"), "releasedLeft");
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("A"), "Left");
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("released D"), "releasedRight");
+		this.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke("D"), "Right");
+		
+		this.getActionMap().put("Left",new AbstractAction(){
 
 			@Override
-			public void keyTyped(KeyEvent e) {				
+			public void actionPerformed(ActionEvent e) {
+				mainPlayer.changeXVelocity(-5);
 			}
-
-			@Override
-			public void keyPressed(KeyEvent e) {	
-				int id = e.getKeyCode();
-				if(id==KeyEvent.VK_A){
-					mainPlayer.changeXVelocity(-5);
-				}
-				if(id==KeyEvent.VK_D){
-					mainPlayer.changeXVelocity(5);
-				}
-			}
-
-			@Override
-			public void keyReleased(KeyEvent e) {			
-				int id = e.getKeyCode();
-				if(id==KeyEvent.VK_A){
-					mainPlayer.changeXVelocity(0);
-
-				}
-				if(id==KeyEvent.VK_D){
-					mainPlayer.changeXVelocity(0);
-
-				}
-			}
-
+			
 		});
+		this.getActionMap().put("releasedLeft",new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainPlayer.changeXVelocity(0);
+			}
+			
+		});
+		this.getActionMap().put("Right",new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainPlayer.changeXVelocity(5);
+			}
+			
+		});
+		this.getActionMap().put("releasedRight",new AbstractAction(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				mainPlayer.changeXVelocity(0);
+			}
+			
+		});
+		
+		
+		JButton pause = new JButton("Pause");
+		pause.setBounds(100,400,90,50);
+		add(pause);
 	}
 	public synchronized void start(){
 		t = new Thread(this);
@@ -153,14 +170,14 @@ public class AtariOutBreak extends JPanel implements Runnable{
 				int ballCenterY = c.getYPos()+c.getHeight()/2;
 				if(b.isHit(ballCenterX, ballCenterY)){
 					blocks.remove(b);
-					
+
 					if(b.getYPos()+b.getHeight()-5 < ballCenterY &&b.getYPos() +b.getHeight() + 5 > ballCenterY){
-					c.changeXVelocity(c.getXVelocity());
-					c.changeYVelocity(-c.getYVelocity());
+						c.changeXVelocity(c.getXVelocity());
+						c.changeYVelocity(-c.getYVelocity());
 					}else{
 						c.changeXVelocity(-c.getXVelocity());
 						c.changeYVelocity(c.getYVelocity());
-						
+
 					}
 				}
 
@@ -272,7 +289,7 @@ class Ball{
 	int xPos;
 	int yPos;
 	int xVelocity;
-	int yVelocity = 1;
+	int yVelocity = 2;
 	final int HEIGHT = 20;
 	final int WIDTH = 20;
 	int ballResetX;
@@ -335,6 +352,26 @@ class Block{
 			width = 100;
 			height = 50;
 			c = Color.BLUE;
+			break;
+		case 1 : 
+			width = 100;
+			height = 50;
+			c = Color.RED;
+			break;
+		case 2 : 
+			width = 100;
+			height = 50;
+			c = Color.ORANGE;
+			break;
+		case 3 : 
+			width = 100;
+			height = 50;
+			c = Color.YELLOW;
+			break;
+		case 4 : 
+			width = 100;
+			height = 50;
+			c = Color.GREEN;
 			break;
 		}
 	}
