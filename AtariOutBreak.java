@@ -88,9 +88,6 @@ public class AtariOutBreak extends JPanel implements Runnable{
 
 		});
 	}
-	public void addBall(int x, int y){
-		balls.add(new Ball(x,y));
-	}
 	public synchronized void start(){
 		t = new Thread(this);
 		isRunning = true;
@@ -156,8 +153,15 @@ public class AtariOutBreak extends JPanel implements Runnable{
 				int ballCenterY = c.getYPos()+c.getHeight()/2;
 				if(b.isHit(ballCenterX, ballCenterY)){
 					blocks.remove(b);
-					c.changeXVelocity(-c.getXVelocity());
+					
+					if(b.getYPos()+b.getHeight()-5 < ballCenterY &&b.getYPos() +b.getHeight() + 5 > ballCenterY){
+					c.changeXVelocity(c.getXVelocity());
 					c.changeYVelocity(-c.getYVelocity());
+					}else{
+						c.changeXVelocity(-c.getXVelocity());
+						c.changeYVelocity(c.getYVelocity());
+						
+					}
 				}
 
 
